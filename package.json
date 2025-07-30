@@ -1,0 +1,69 @@
+{
+  "name": "acf-json-tree-view",
+  "displayName": "ACF JSON Tree View",
+  "publisher": "rynokins",
+  "description": "Shows ACF field group titles with enhanced tree view",
+  "version": "0.0.2",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [
+    "onLanguage:json"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "acfFieldGroups",
+          "name": "ACF Field Groups",
+          "when": "true"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "acfFieldGroups.refresh",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "acfFieldGroups.openFile",
+        "title": "Open and Reveal in Explorer",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "acfFieldGroups.openFileQuiet",
+        "title": "Open File (Quiet)",
+        "icon": "$(file)"
+      },
+      {
+        "command": "acfFieldGroups.generateNewKey",
+        "title": "Generate new ACF Field key",
+        "icon": "$(key)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "acfFieldGroups.refresh",
+          "when": "view == acfFieldGroups",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "acfFieldGroups.openFile",
+          "when": "view == acfFieldGroups && viewItem == acfFile",
+          "group": "reveal"
+        },
+        {
+          "command": "acfFieldGroups.openFileQuiet",
+          "when": "view == acfFieldGroups && viewItem == acfFile",
+          "group": "open"
+        }
+      ]
+    }
+  }
+}
