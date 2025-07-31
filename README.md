@@ -1,7 +1,3 @@
-# ACF JSON Tree View README
-
-## Features
-
 # ACF JSON Tree View
 
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/rynokins.acf-json-tree-view?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=rynokins.acf-json-tree-view)
