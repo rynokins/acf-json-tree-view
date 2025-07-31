@@ -3,16 +3,25 @@
   "displayName": "ACF JSON Tree View",
   "publisher": "rynokins",
   "description": "Shows ACF field group titles with enhanced tree view",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "engines": {
-    "vscode": "^1.74.0"
+    "vscode": "^1.80.0"
   },
-  "categories": ["Other"],
+  "categories": [
+    "Other"
+  ],
   "activationEvents": [
     "onLanguage:json"
   ],
   "main": "./extension.js",
+  "icon": "./icon.png",
   "contributes": {
+    "submenus": [
+      {
+        "id": "acfFieldGroups.keyManagement",
+        "label": "🔑 ACF Key Management"
+      }
+    ],
     "views": {
       "explorer": [
         {
@@ -41,29 +50,398 @@
       {
         "command": "acfFieldGroups.generateNewKey",
         "title": "Generate new ACF Field key",
-        "icon": "$(key)"
+        "category": "ACF Key Management"
+      },
+      {
+        "command": "acfFieldGroups.generateNewGroupKey",
+        "title": "Generate New Group Key (Update Filename)",
+        "category": "ACF Key Management"
+      },
+      {
+        "command": "acfFieldGroups.generateNewFieldKeyAndReplaceAll",
+        "title": "Generate New Field Key (Replace All)",
+        "category": "ACF Key Management"
+      },
+      {
+        "command": "acfFieldGroups.generateNewKeysForAllFields",
+        "title": "Generate New Keys for All Fields",
+        "category": "ACF Key Management"
+      },
+      {
+        "command": "acfFieldGroups.copyPath",
+        "title": "Copy Path"
+      },
+      {
+        "command": "acfFieldGroups.copyRelativePath",
+        "title": "Copy Relative Path"
+      },
+      {
+        "command": "acfFieldGroups.revealInExplorer",
+        "title": "Reveal in Explorer"
+      },
+      {
+        "command": "acfFieldGroups.openInNewEditorGroup",
+        "title": "Open to the Side"
+      },
+      {
+        "command": "acfFieldGroups.rename",
+        "title": "Rename"
+      },
+      {
+        "command": "acfFieldGroups.delete",
+        "title": "Delete"
+      },
+      {
+        "command": "acfFieldGroups.newFile",
+        "title": "New ACF Field Group"
+      },
+      {
+        "command": "acfFieldGroups.openSettings",
+        "title": "Open Extension Settings",
+        "icon": "$(gear)"
       }
     ],
+    "configuration": {
+      "type": "object",
+      "title": "ACF JSON Tree View Configuration",
+      "properties": {
+        "acfJsonTreeView.iconRules": {
+          "type": "array",
+          "default": [
+            {
+              "name": "Options Page",
+              "condition": { "locationParam": "options_page" },
+              "icon": "gear",
+              "color": "foreground",
+              "typeLabel": "Options",
+              "weight": 0
+            },
+            {
+              "name": "Gutenberg Block",
+              "condition": { "titleContains": "block" },
+              "icon": "symbol-class",
+              "color": "charts.purple",
+              "typeLabel": "Gutenberg Block",
+              "weight": 0
+            },
+            {
+              "name": "Clone Field",
+              "condition": { "titleContains": "clone" },
+              "icon": "git-branch",
+              "color": "charts.orange",
+              "typeLabel": "Clone Field",
+              "weight": 0
+            },
+            {
+              "name": "Post Fields",
+              "condition": {
+                "and": [
+                  { "titleContains": "post" },
+                  { "locationParam": "post_type" }
+                ]
+              },
+              "icon": "file-text",
+              "color": "charts.green",
+              "typeLabel": "Post Fields",
+              "weight": 0
+            },
+            {
+              "name": "Page Fields",
+              "condition": {
+                "and": [
+                  { "titleContains": "page" },
+                  { "locationParam": "page_template" }
+                ]
+              },
+              "icon": "browser",
+              "color": "charts.blue",
+              "typeLabel": "Page Fields",
+              "weight": 0
+            },
+            {
+              "name": "Menu Fields",
+              "condition": {
+                "and": [
+                  { "titleContains": "menu" },
+                  { "locationParam": "nav_menu" }
+                ]
+              },
+              "icon": "list-unordered",
+              "color": "charts.red",
+              "typeLabel": "Menu Fields",
+              "weight": 0
+            },
+            {
+              "name": "General Fields",
+              "condition": {},
+              "icon": "json",
+              "color": "charts.yellow",
+              "typeLabel": "General Fields",
+              "weight": 0
+            }
+          ],
+          "description": "Custom icon rules for field groups",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the rule"
+              },
+              "condition": {
+                "type": "object",
+                "description": "Condition for when this rule applies. Can use simple conditions or combine with AND/OR logic.",
+                "properties": {
+                  "titleContains": {
+                    "type": "string",
+                    "description": "Field group title must contain this string (case-insensitive)"
+                  },
+                  "locationParam": {
+                    "type": "string",
+                    "description": "Field group must have this location parameter"
+                  },
+                  "and": {
+                    "type": "array",
+                    "description": "All conditions in this array must match (logical AND). Each item is a condition object.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "titleContains": { "type": "string" },
+                        "locationParam": { "type": "string" },
+                        "and": { "type": "array" },
+                        "or": { "type": "array" }
+                      }
+                    }
+                  },
+                  "or": {
+                    "type": "array",
+                    "description": "At least one condition in this array must match (logical OR). Each item is a condition object.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "titleContains": { "type": "string" },
+                        "locationParam": { "type": "string" },
+                        "and": { "type": "array" },
+                        "or": { "type": "array" }
+                      }
+                    }
+                  }
+                },
+                "oneOf": [
+                  {
+                    "required": ["titleContains"]
+                  },
+                  {
+                    "required": ["locationParam"]
+                  },
+                  {
+                    "required": ["and"]
+                  },
+                  {
+                    "required": ["or"]
+                  }
+                ],
+                "examples": [
+                  {
+                    "titleContains": "block"
+                  },
+                  {
+                    "locationParam": "post_type"
+                  },
+                  {
+                    "and": [
+                      { "titleContains": "block" },
+                      { "locationParam": "post_type" }
+                    ]
+                  },
+                  {
+                    "or": [
+                      { "titleContains": "block" },
+                      { "titleContains": "section" }
+                    ]
+                  },
+                  {
+                    "and": [
+                      { "titleContains": "settings" },
+                      {
+                        "or": [
+                          { "locationParam": "options_page" },
+                          { "locationParam": "block" }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "icon": {
+                "type": "string",
+                "description": "Icon name to display"
+              },
+              "color": {
+                "type": "string",
+                "description": "Theme color ID for the icon"
+              },
+              "typeLabel": {
+                "type": "string",
+                "description": "Label to show as field group type"
+              },
+              "weight": {
+                "type": "number",
+                "default": 0,
+                "description": "Weight for sorting rules"
+              }
+            }
+          }
+        },
+        "acfJsonTreeView.ignoreThemes": {
+          "type": "array",
+          "default": [],
+          "description": "List of theme names to ignore in the tree view"
+        },
+        "acfJsonTreeView.showOverrideIndicator": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show indicator for field group overrides"
+        },
+        "acfJsonTreeView.overrideIcon": {
+          "type": "string",
+          "default": "add",
+          "description": "Icon to display for field group overrides"
+        },
+        "acfJsonTreeView.overrideColor": {
+          "type": "string",
+          "default": "charts.orange",
+          "description": "Theme color ID for override indicator"
+        },
+        "acfJsonTreeView.themeIcon": {
+          "type": "string",
+          "default": "folder",
+          "description": "Icon to display for theme folders"
+        },
+        "acfJsonTreeView.themeColor": {
+          "type": "string",
+          "default": "folderIcons.folderForeground",
+          "description": "Theme color ID for theme folder"
+        }
+      }
+    },
     "menus": {
       "view/title": [
         {
           "command": "acfFieldGroups.refresh",
           "when": "view == acfFieldGroups",
           "group": "navigation"
+        },
+        {
+          "command": "acfFieldGroups.openSettings",
+          "when": "view == acfFieldGroups",
+          "group": "navigation@1"
         }
       ],
       "view/item/context": [
         {
           "command": "acfFieldGroups.openFile",
           "when": "view == acfFieldGroups && viewItem == acfFile",
-          "group": "reveal"
+          "group": "navigation"
         },
         {
           "command": "acfFieldGroups.openFileQuiet",
           "when": "view == acfFieldGroups && viewItem == acfFile",
-          "group": "open"
+          "group": "navigation"
+        },
+        {
+          "command": "acfFieldGroups.copyPath",
+          "when": "view == acfFieldGroups && viewItem == acfFile",
+          "group": "1_copy"
+        },
+        {
+          "command": "acfFieldGroups.copyRelativePath",
+          "when": "view == acfFieldGroups && viewItem == acfFile",
+          "group": "1_copy"
+        },
+        {
+          "command": "acfFieldGroups.revealInExplorer",
+          "when": "view == acfFieldGroups && viewItem == acfFile",
+          "group": "2_reveal"
+        },
+        {
+          "command": "acfFieldGroups.openInNewEditorGroup",
+          "when": "view == acfFieldGroups && viewItem == acfFile",
+          "group": "3_open"
+        },
+        {
+          "command": "acfFieldGroups.rename",
+          "when": "view == acfFieldGroups && viewItem == acfFile",
+          "group": "5_modification"
+        },
+        {
+          "command": "acfFieldGroups.delete",
+          "when": "view == acfFieldGroups && viewItem == acfFile",
+          "group": "5_modification"
+        },
+        {
+          "command": "acfFieldGroups.newFile",
+          "when": "view == acfFieldGroups && viewItem == theme",
+          "group": "new"
+        }
+      ],
+      "navigation/context": [
+        {
+          "command": "acfFieldGroups.generateNewGroupKey",
+          "when": "resourceExtname == .json"
+        },
+        {
+          "command": "acfFieldGroups.generateNewFieldKeyAndReplaceAll",
+          "when": "resourceExtname == .json"
+        },
+        {
+          "command": "acfFieldGroups.generateNewKeysForAllFields",
+          "when": "resourceExtname == .json"
+        }
+      ],
+      "editor/context": [
+        {
+          "submenu": "acfFieldGroups.keyManagement",
+          "when": "resourceExtname == .json && resourcePath =~ /acf-json/",
+          "group": "navigation@0"
+        }
+      ],
+      "acfFieldGroups.keyManagement": [
+        {
+          "command": "acfFieldGroups.generateNewKey"
+        },
+        {
+          "command": "acfFieldGroups.generateNewGroupKey"
+        },
+        {
+          "command": "acfFieldGroups.generateNewFieldKeyAndReplaceAll"
+        },
+        {
+          "command": "acfFieldGroups.generateNewKeysForAllFields"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "acfFieldGroups.generateNewKey",
+          "when": "resourceExtname == .json && resourcePath =~ /acf-json/"
+        },
+        {
+          "command": "acfFieldGroups.generateNewGroupKey",
+          "when": "resourceExtname == .json && resourcePath =~ /acf-json/"
+        },
+        {
+          "command": "acfFieldGroups.generateNewFieldKeyAndReplaceAll",
+          "when": "resourceExtname == .json && resourcePath =~ /acf-json/"
+        },
+        {
+          "command": "acfFieldGroups.generateNewKeysForAllFields",
+          "when": "resourceExtname == .json && resourcePath =~ /acf-json/"
         }
       ]
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rynokins/acf-json-tree-view.git"
   }
 }
