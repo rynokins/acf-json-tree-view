@@ -11,7 +11,7 @@ A Visual Studio Code extension that provides an enhanced tree view for managing 
 
 View a list of the titles of your Field Groups instead of the randomized `group_abcdefg123456.json` filenames! Add colors and icons to distinguish between the types of ACF Field Groups using location rules or titles, or both! And more.
 
-![ACF JSON Tree View Screenshot](https://via.placeholder.com/800x400?text=ACF+JSON+Tree+View+Screenshot)
+![ACF JSON Tree View Screenshot](./screenshot.png)
 
 ## Features
 - List view of the titles of your ACF Field Groups
