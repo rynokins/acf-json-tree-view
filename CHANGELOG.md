@@ -1,5 +1,26 @@
 # Change Log
 
+## [0.0.6] - 2025-08-01
+
+### Added
+- **Enhanced Autocomplete for Settings**
+  - Added comprehensive enum lists for VS Code icons (300+ options)
+  - Added comprehensive enum lists for theme colors (80+ options)
+  - Implemented autocomplete support for all icon and color configuration fields
+  - Added `@vscode/codicons` dependency for official icon references
+
+### Fixed
+- **Configuration Management**
+  - Fixed settings refresh issue - icon/color changes now update immediately without requiring window reload
+  - Added configuration change listener to automatically reload icon rules when settings are modified
+  - Improved real-time settings updates for better user experience
+
+### Changed
+- **Build System Improvements**
+  - Updated build scripts to include enum generation in the build process
+  - Added `prebuild` script to ensure enums are generated before building
+  - Improved extension packaging workflow with proper bundling
+
 ## [0.0.5] - 2025-07-31
 
 ### Added

@@ -1,10 +1,37 @@
+# Ignore node_modules
+node_modules/**
+
+# Ignore extension configs
 .vscode/**
+
+# Ignore test files
 .vscode-test/**
 test/**
-.gitignore
+out/test/**
+
+# Ignore source code
+src/**
+
+# Ignore all webview-ui files except the build directory
+webview-ui/src/**
+webview-ui/public/**
+webview-ui/scripts/**
+webview-ui/index.html
+webview-ui/README.md
+webview-ui/package.json
+webview-ui/package-lock.json
+webview-ui/node_modules/**
+
+# Ignore Misc
 .yarnrc
 vsc-extension-quickstart.md
-**/jsconfig.json
+**/.gitignore
+**/tsconfig.json
+**/vite.config.ts
+**/.eslintrc.json
 **/*.map
-**/eslint.config.mjs
+**/*.ts
+
 **/.vscode-test.*
+*.psd
+*.svg

@@ -61,7 +61,9 @@ Additional commands to make editing your ACF JSON files easier. Use commands to 
 Customize via settings, either search for `acfJsonTreeView` or use the ⚙️ gear button in the tree view's title bar.
 
 ### Icon Rules
-Customize how Field Groups are categorized and displayed using icon rules:
+Customize how Field Groups are categorized and displayed using icon rules. **Autocomplete is enabled for icons and colors with 300+ VS Code icons and 80+ theme colors available.**
+
+For a visual reference of available icons, see the [VS Code Icon Reference](https://code.visualstudio.com/api/references/icons-in-labels#icon-listing).
 
 ```json
 "acfJsonTreeView.iconRules": [

@@ -63,6 +63,10 @@ class AcfTreeDataProvider {
   refresh() {
     this.loadAcfFiles().then(() => {
       this._onDidChangeTreeData.fire();
+    }).catch(error => {
+      console.error('Error refreshing ACF tree data:', error);
+      // Fire the event anyway to ensure UI updates
+      this._onDidChangeTreeData.fire();
     });
   }
 
@@ -805,10 +809,10 @@ function activate(context) {
         vscode.window.showErrorMessage('Could not determine base path for new file');
         return;
       }
-
+      let randomFilename = `group_${generateRandomString(13)}`;
       const fileName = await vscode.window.showInputBox({
         prompt: 'Enter new file name (will be suffixed with .json)',
-        value: 'new-field-group'
+        value: randomFilename
       });
 
       if (fileName) {
@@ -818,7 +822,7 @@ function activate(context) {
 
         // Create empty ACF JSON structure
         const newContent = JSON.stringify({
-          key: `group_${generateRandomString(13)}`,
+          key: fileName.endsWith('.json') ? fileName.replace('.json', '') : fileName,
           title: cleanName.replace('.json', ''),
           fields: [],
           location: [
@@ -869,6 +873,21 @@ function activate(context) {
   });
 
   context.subscriptions.push(treeView);
+
+  // Listen for configuration changes
+  const configChangeListener = vscode.workspace.onDidChangeConfiguration((event) => {
+    if (event.affectsConfiguration('acfJsonTreeView')) {
+      // Reload icon rules and refresh tree view
+      treeProvider.iconRules = treeProvider.loadIconRules();
+      treeProvider.refresh();
+
+      // Also refresh file decorations
+      decorationProvider.refresh();
+    }
+  });
+
+  context.subscriptions.push(configChangeListener);
+
   treeProvider.refresh();
 
 }
