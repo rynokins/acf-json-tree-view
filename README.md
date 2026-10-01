@@ -1,8 +1,5 @@
 # ACF JSON Tree View
 
-[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/rynokins.acf-json-tree-view?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=rynokins.acf-json-tree-view)
-[![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/rynokins.acf-json-tree-view?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=rynokins.acf-json-tree-view)
-
 A Visual Studio Code extension that provides an enhanced tree view for managing Advanced Custom Fields (ACF) JSON Field Groups in WordPress projects.
 
 View a list of the titles of your Field Groups instead of the randomized `group_abcdefg123456.json` filenames! Add colors and icons to distinguish between the types of ACF Field Groups using location rules or titles, or both! And more.
